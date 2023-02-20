@@ -1,53 +1,65 @@
 #!/bin/bash
 
-echo "Select A Starter Kit"
-echo "1. Laravel"
-echo "2. Swift"
-echo "3. Kotlin"
-echo "4. Vue"
-echo "5. Configure manually"
+# Function to prompt the user to select a starter kit
+function select_starter_kit() {
+    PS3="Select a Starter Kit: "
+    select starter_kit in "laravel"; do
+        case $starter_kit in
+            "laravel")
+                repo_url="https://github.com/laranex/api-starter-kit"
+                break
+                ;;
+            *)
+                echo "Invalid option. Please select a valid option."
+                ;;
+        esac
+    done
+}
 
-read -p "Enter your choice [1-5]: " choice
+# Function to prompt the user if they want to configure the installation process manually
+function configure_manually() {
+    read -p "Do you want to configure the installation process manually? (Y/N): " answer
+    if [[ $answer =~ [yY](es)* ]]; then
+        # Get available branches for the chosen repository
+        branches=$(git ls-remote --heads $repo_url | sed 's?.*refs/heads/??' | tr '\n' ' ')
+        PS3="Select a Branch: "
+        select branch in $branches; do
+            break
+        done
+    else
+        branch="master"
+    fi
+}
 
-case $choice in
-    1)
-        repo="https://github.com/laranex/api-starter-kit"
-        ;;
-    2)
-        repo="https://github.com/laranex/swift"
-        ;;
-    3)
-        repo="https://github.com/laranex/kotlin"
-        ;;
-    4)
-        repo="https://github.com/laranex/vue"
-        ;;
-    5)
-        read -p "Enter the repository URL: " repo
-        read -p "Configure manually? [Y/n]: " config
+# Function to prompt the user to enter a project name
 
-        if [ "$config" = "Y" ] || [ "$config" = "y" ]; then
-            read -p "Enter the branch name: " branch
-        else
-            branch="master"
-        fi
-        ;;
-    *)
-        echo "Invalid choice"
-        exit 1
-        ;;
-esac
 
-read -p "Enter the project name: " project
+# The main function that will be executed when the user invokes the command
+function onenex() {
+    if [ -z "$1" ]; then
+        # If no argument is provided, print the usage instructions
+        echo "Usage: onenex new - Install a new starter kit from https://github.com/onenextech/installer"
+    else
+        case $1 in
+            "new")
+                select_starter_kit
+                configure_manually
+                enter_project_name
 
-if [ "$choice" -ne 5 ]; then
-    branch="master"
-fi
+                # Clone the repository with the chosen branch and rename the directory to the project name
+                git clone --branch $branch $repo_url $project_name
+                mv ${repo_url##*/} $project_name
+                cd $project_name
 
-git clone --single-branch --branch "$branch" "$repo" "$project"
+                # Remove the .git directory so that the user can start with a fresh repository
+                rm -rf .git
+                ;;
+            *)
+                echo "Invalid command. Please use 'onenex new' to create a new project."
+                ;;
+        esac
+    fi
+}
 
-cd "$project"
-
-rm -rf .git
-
-echo "The starter kit has been installed successfully!"
+# Execute the onenex function with the provided arguments
+onenex $@
