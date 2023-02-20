@@ -39,7 +39,7 @@ function configure_manually() {
 function onenex() {
     if [ -z "$1" ]; then
         # If no argument is provided, print the usage instructions
-        echo "Usage: onenex new - Install a new starter kit from https://github.com/onenextech/installer"
+        echo "Usage: onenex new - Install a new starter kit from https://github.com/onenextech"
     else
         case $1 in
             "new")
