@@ -18,6 +18,7 @@ function select_starter_kit() {
 
 # Function to prompt the user if they want to configure the installation process manually
 function configure_manually() {
+    # shellcheck disable=SC2162
     read -p "Do you want to configure the installation process manually? (Y/N): " answer
     if [[ $answer =~ [yY](es)* ]]; then
         # Get available branches for the chosen repository
@@ -47,9 +48,11 @@ function onenex() {
                 enter_project_name
 
                 # Clone the repository with the chosen branch and rename the directory to the project name
-                git clone --branch $branch $repo_url $project_name
-                mv ${repo_url##*/} $project_name
-                cd $project_name
+                # shellcheck disable=SC2154
+                git clone --branch $branch $repo_url "$project_name"
+                mv ${repo_url##*/} "$project_name"
+                # shellcheck disable=SC2164
+                cd "$project_name"
 
                 # Remove the .git directory so that the user can start with a fresh repository
                 rm -rf .git
@@ -62,4 +65,5 @@ function onenex() {
 }
 
 # Execute the onenex function with the provided arguments
+# shellcheck disable=SC2068
 onenex $@
