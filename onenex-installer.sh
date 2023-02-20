@@ -36,10 +36,10 @@ function configure_manually() {
 
 
 # The main function that will be executed when the user invokes the command
-function onenex() {
+function onenex-installer() {
     if [ -z "$1" ]; then
         # If no argument is provided, print the usage instructions
-        echo "Usage: onenex new - Install a new starter kit from https://github.com/onenextech"
+        echo "Usage: onenex-installer new - Install a new starter kit from https://github.com/onenextech"
     else
         case $1 in
             "new")
@@ -66,4 +66,4 @@ function onenex() {
 
 # Execute the onenex function with the provided arguments
 # shellcheck disable=SC2068
-onenex $@
+onenex-installer $@
