@@ -1,0 +1,53 @@
+#!/bin/bash
+
+echo "Select A Starter Kit"
+echo "1. Laravel"
+echo "2. Swift"
+echo "3. Kotlin"
+echo "4. Vue"
+echo "5. Configure manually"
+
+read -p "Enter your choice [1-5]: " choice
+
+case $choice in
+    1)
+        repo="https://github.com/laranex/api-starter-kit"
+        ;;
+    2)
+        repo="https://github.com/laranex/swift"
+        ;;
+    3)
+        repo="https://github.com/laranex/kotlin"
+        ;;
+    4)
+        repo="https://github.com/laranex/vue"
+        ;;
+    5)
+        read -p "Enter the repository URL: " repo
+        read -p "Configure manually? [Y/n]: " config
+
+        if [ "$config" = "Y" ] || [ "$config" = "y" ]; then
+            read -p "Enter the branch name: " branch
+        else
+            branch="master"
+        fi
+        ;;
+    *)
+        echo "Invalid choice"
+        exit 1
+        ;;
+esac
+
+read -p "Enter the project name: " project
+
+if [ "$choice" -ne 5 ]; then
+    branch="master"
+fi
+
+git clone --single-branch --branch "$branch" "$repo" "$project"
+
+cd "$project"
+
+rm -rf .git
+
+echo "The starter kit has been installed successfully!"
